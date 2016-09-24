@@ -1,8 +1,6 @@
 package com.ManagerMain;
 
 import java.io.IOException;
-import java.io.OutputStream;
-import java.io.PrintStream;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.ServerSocket;
@@ -16,21 +14,21 @@ import android.widget.TextView;
 
 public class ManagerMain extends Activity {
 
-    TextView info, infoip, msg;
-    String message = "";
+    TextView puertoManager, ipManager, dispositivos;
+    String mensaje = "";
     ServerSocket serverSocket;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_manager_main);
-        info = (TextView) findViewById(R.id.info);
-        infoip = (TextView) findViewById(R.id.infoip);
-        msg = (TextView) findViewById(R.id.msg);
+        puertoManager = (TextView) findViewById(R.id.info);
+        ipManager = (TextView) findViewById(R.id.infoip);
+        dispositivos = (TextView) findViewById(R.id.msg);
 
-        infoip.setText(getIpAddress());
+        ipManager.setText(obtenerIPManager());
 
-        Thread socketServerThread = new Thread(new SocketServerThread());
+        Thread socketServerThread = new Thread(new iniciarServerSocket());
         socketServerThread.start();
     }
 
@@ -48,7 +46,7 @@ public class ManagerMain extends Activity {
         }
     }
 
-    private class SocketServerThread extends Thread {
+    private class iniciarServerSocket extends Thread {
 
         static final int SocketServerPORT = 8080;
         int count = 0;
@@ -61,7 +59,7 @@ public class ManagerMain extends Activity {
 
                     @Override
                     public void run() {
-                        info.setText("I'm waiting here: "
+                        puertoManager.setText("Esperando Dispositivos en el puerto: "
                                 + serverSocket.getLocalPort());
                     }
                 });
@@ -69,21 +67,18 @@ public class ManagerMain extends Activity {
                 while (true) {
                     Socket socket = serverSocket.accept();
                     count++;
-                    message += "#" + count + " from " + socket.getInetAddress()
+                    mensaje += "Dispositivo #" + count + " Conectado desde " + socket.getInetAddress()
                             + ":" + socket.getPort() + "\n";
 
                     ManagerMain.this.runOnUiThread(new Runnable() {
 
                         @Override
                         public void run() {
-                            msg.setText(message);
+                            dispositivos.setText(mensaje);
                         }
                     });
 
-                    SocketServerReplyThread socketServerReplyThread = new SocketServerReplyThread(
-                            socket, count);
-                    socketServerReplyThread.run();
-
+                    //Mandarle  un mensaje de conexion
                 }
             } catch (IOException e) {
                 // TODO Auto-generated catch block
@@ -93,55 +88,7 @@ public class ManagerMain extends Activity {
 
     }
 
-    private class SocketServerReplyThread extends Thread {
-
-        private Socket hostThreadSocket;
-        int cnt;
-
-        SocketServerReplyThread(Socket socket, int c) {
-            hostThreadSocket = socket;
-            cnt = c;
-        }
-
-        @Override
-        public void run() {
-            OutputStream outputStream;
-            String msgReply = "Hello from Android, you are #" + cnt;
-
-            try {
-                outputStream = hostThreadSocket.getOutputStream();
-                PrintStream printStream = new PrintStream(outputStream);
-                printStream.print(msgReply);
-                printStream.close();
-
-                message += "replayed: " + msgReply + "\n";
-
-                ManagerMain.this.runOnUiThread(new Runnable() {
-
-                    @Override
-                    public void run() {
-                        msg.setText(message);
-                    }
-                });
-
-            } catch (IOException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-                message += "Something wrong! " + e.toString() + "\n";
-            }
-
-            ManagerMain.this.runOnUiThread(new Runnable() {
-
-                @Override
-                public void run() {
-                    msg.setText(message);
-                }
-            });
-        }
-
-    }
-
-    private String getIpAddress() {
+    private String obtenerIPManager() {
         String ip = "";
         try {
             Enumeration<NetworkInterface> enumNetworkInterfaces = NetworkInterface
@@ -155,7 +102,7 @@ public class ManagerMain extends Activity {
                     InetAddress inetAddress = enumInetAddress.nextElement();
 
                     if (inetAddress.isSiteLocalAddress()) {
-                        ip += "SiteLocalAddress: "
+                        ip += "Direccion IP Local: "
                                 + inetAddress.getHostAddress() + "\n";
                     }
 
@@ -166,7 +113,7 @@ public class ManagerMain extends Activity {
         } catch (SocketException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
-            ip += "Something Wrong! " + e.toString() + "\n";
+            ip += "Problemas de IP " + e.toString() + "\n";
         }
 
         return ip;
