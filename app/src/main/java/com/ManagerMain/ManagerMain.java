@@ -1,6 +1,8 @@
 package com.ManagerMain;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.ServerSocket;
@@ -10,6 +12,7 @@ import java.util.Enumeration;
 
 import android.os.Bundle;
 import android.app.Activity;
+import android.util.Log;
 import android.widget.TextView;
 
 public class ManagerMain extends Activity {
@@ -17,6 +20,7 @@ public class ManagerMain extends Activity {
     TextView puertoManager, ipManager, dispositivos;
     String mensaje = "";
     ServerSocket serverSocket;
+    private static final String debugString = "debug";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,7 +53,6 @@ public class ManagerMain extends Activity {
     private class iniciarServerSocket extends Thread {
 
         static final int SocketServerPORT = 8080;
-        int count = 0;
 
         @Override
         public void run() {
@@ -66,18 +69,30 @@ public class ManagerMain extends Activity {
 
                 while (true) {
                     Socket socket = serverSocket.accept();
-                    count++;
-                    mensaje += "Dispositivo #" + count + " Conectado desde " + socket.getInetAddress()
-                            + ":" + socket.getPort() + "\n";
 
-                    ManagerMain.this.runOnUiThread(new Runnable() {
+                    BufferedReader br = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+                    Log.i(debugString, br.readLine());
+                    /*
+                    String jsonEntrando = null;
+                    String dato = "";
+                    while ((jsonEntrando = br.readLine()) != null) {
+                        dato = dato.concat(jsonEntrando);
+                    }
+                    */
+                    int count = 0;
+                    for(int x = 0; x < 3; x++) {
 
-                        @Override
-                        public void run() {
-                            dispositivos.setText(mensaje);
-                        }
-                    });
+                        count++;
+                        mensaje += "Dispositivo #" + x + "\n";
 
+                        ManagerMain.this.runOnUiThread(new Runnable() {
+
+                            @Override
+                            public void run() {
+                                dispositivos.setText(mensaje);
+                            }
+                        });
+                    }
                     //Mandarle  un mensaje de conexion
                 }
             } catch (IOException e) {
