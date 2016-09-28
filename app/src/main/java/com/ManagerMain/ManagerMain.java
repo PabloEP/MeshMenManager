@@ -1,8 +1,10 @@
 package com.ManagerMain;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.ServerSocket;
@@ -72,28 +74,32 @@ public class ManagerMain extends Activity {
 
                     BufferedReader br = new BufferedReader(new InputStreamReader(socket.getInputStream()));
                     Log.i(debugString, br.readLine());
-                    /*
+
                     String jsonEntrando = null;
                     String dato = "";
+
                     while ((jsonEntrando = br.readLine()) != null) {
                         dato = dato.concat(jsonEntrando);
                     }
-                    */
                     int count = 0;
-                    for(int x = 0; x < 3; x++) {
+                    for(int x = 0; x < 1; x++) {
 
                         count++;
-                        mensaje += "Dispositivo #" + x + "\n";
+                        mensaje += dato + "\n";
 
                         ManagerMain.this.runOnUiThread(new Runnable() {
 
                             @Override
                             public void run() {
                                 dispositivos.setText(mensaje);
+
                             }
                         });
                     }
-                    //Mandarle  un mensaje de conexion
+                    BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
+                    bw.write(dato);
+                    bw.newLine();
+                    bw.flush();
                 }
             } catch (IOException e) {
                 // TODO Auto-generated catch block
