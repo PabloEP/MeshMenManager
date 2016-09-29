@@ -54,7 +54,7 @@ public class ManagerMain extends Activity {
 
     private class iniciarServerSocket extends Thread {
 
-        static final int SocketServerPORT = 8080;
+        static final int SocketServerPORT = 5656;
 
         @Override
         public void run() {
@@ -70,21 +70,25 @@ public class ManagerMain extends Activity {
                 });
 
                 while (true) {
+                    Log.i(debugString,"acepta");
                     Socket socket = serverSocket.accept();
-
                     BufferedReader br = new BufferedReader(new InputStreamReader(socket.getInputStream()));
                     Log.i(debugString, br.readLine());
+                    mensaje = br.readLine();
+                    Log.i(debugString, mensaje);
+                   /* ManagerMain.this.runOnUiThread(new Runnable() {
 
-                    String jsonEntrando = null;
-                    String dato = "";
+                        @Override
+                        public void run() {
+                            dispositivos.setText("datos nuevos" + mensaje);
 
-                    while ((jsonEntrando = br.readLine()) != null) {
-                        dato = dato.concat(jsonEntrando);
-                    }
-                    int count = 0;
+                        }
+                    });*/
+
+                    String dato = "Hola nuevo android";
+
                     for(int x = 0; x < 1; x++) {
 
-                        count++;
                         mensaje += dato + "\n";
 
                         ManagerMain.this.runOnUiThread(new Runnable() {
