@@ -32,6 +32,7 @@ public class ManagerMain extends Activity {
         ipManager = (TextView) findViewById(R.id.infoip);
         dispositivos = (TextView) findViewById(R.id.msg);
 
+
         ipManager.setText(obtenerIPManager());
 
         Thread socketServerThread = new Thread(new iniciarServerSocket());
@@ -70,38 +71,22 @@ public class ManagerMain extends Activity {
                 });
 
                 while (true) {
-                    Log.i(debugString,"acepta");
+
                     Socket socket = serverSocket.accept();
+
                     BufferedReader br = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-                    Log.i(debugString, br.readLine());
-                    mensaje = br.readLine();
-                    Log.i(debugString, mensaje);
-                   /* ManagerMain.this.runOnUiThread(new Runnable() {
+                    mensaje += br.readLine() + "\n";
+
+                    ManagerMain.this.runOnUiThread(new Runnable() {
 
                         @Override
                         public void run() {
-                            dispositivos.setText("datos nuevos" + mensaje);
-
+                            dispositivos.setText(mensaje);
                         }
-                    });*/
+                    });
 
-                    String dato = "Hola nuevo android";
-
-                    for(int x = 0; x < 1; x++) {
-
-                        mensaje += dato + "\n";
-
-                        ManagerMain.this.runOnUiThread(new Runnable() {
-
-                            @Override
-                            public void run() {
-                                dispositivos.setText(mensaje);
-
-                            }
-                        });
-                    }
                     BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
-                    bw.write(dato);
+                    bw.write("Hola nuevo android");
                     bw.newLine();
                     bw.flush();
                 }
