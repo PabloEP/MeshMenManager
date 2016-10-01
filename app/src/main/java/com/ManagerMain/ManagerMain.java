@@ -17,6 +17,10 @@ import android.app.Activity;
 import android.util.Log;
 import android.widget.TextView;
 
+/**
+ * Clase principal del manager, se encarga del server y la GUI con sus cambios
+ * también podrá comunicarse con el API.
+ * */
 public class ManagerMain extends Activity {
 
     TextView puertoManager, ipManager, dispositivos;
@@ -53,6 +57,11 @@ public class ManagerMain extends Activity {
         }
     }
 
+    /**
+     * Se encarga de inciar el servidor
+     * @see java.lang.Thread que es el hilo del servidor y espera rspuestas
+     * @see java.lang.Runnable ejecuta la aplicacion, al igual que genera cambios de GUI
+     * */
     private class iniciarServerSocket extends Thread {
 
         static final int SocketServerPORT = 5656;
@@ -73,10 +82,10 @@ public class ManagerMain extends Activity {
                 while (true) {
 
                     Socket socket = serverSocket.accept();
-
+                    //recibe los datos del node entrante
                     BufferedReader br = new BufferedReader(new InputStreamReader(socket.getInputStream()));
                     mensaje += br.readLine() + "\n";
-
+                    //imprime estos datos en pantalla
                     ManagerMain.this.runOnUiThread(new Runnable() {
 
                         @Override
@@ -84,9 +93,11 @@ public class ManagerMain extends Activity {
                             dispositivos.setText(mensaje);
                         }
                     });
-
+                    //envia los datos que del nuevo nodo
+                    //en esta linea es donde se puede llamar al api y ademas guardar los datos
+                    //en la lista
                     BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
-                    bw.write("Hola nuevo android");
+                    bw.write(mensaje);
                     bw.newLine();
                     bw.flush();
                 }
@@ -98,6 +109,11 @@ public class ManagerMain extends Activity {
 
     }
 
+    /**
+     * Método encargado de obtener la ip del server.
+     * @return un string con el numero de la ip
+     *
+     * */
     private String obtenerIPManager() {
         String ip = "";
         try {
