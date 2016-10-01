@@ -93,6 +93,7 @@ public class ManagerMain extends Activity {
                     //recibe los datos del node entrante
                     BufferedReader br = new BufferedReader(new InputStreamReader(socket.getInputStream()));
                     String recibido = br.readLine();
+                    Log.i(debugString, recibido + "                                  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
                     mensaje += recibido + "\n";
                     //imprime estos datos en pantalla
                     ManagerMain.this.runOnUiThread(new Runnable() {
