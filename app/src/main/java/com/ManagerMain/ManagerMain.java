@@ -17,6 +17,7 @@ import android.app.Activity;
 import android.util.Log;
 import android.widget.TextView;
 
+import com.estructuras.ListaDoble;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -72,6 +73,7 @@ public class ManagerMain extends Activity {
 
         static final int SocketServerPORT = 5656;
 
+
         @Override
         public void run() {
             try {
@@ -104,11 +106,13 @@ public class ManagerMain extends Activity {
                     //en esta linea es donde se puede llamar al api y ademas guardar los datos
                     //en la lista
                     jsonRecibido = gson.fromJson(recibido,JsonElement.class).getAsJsonObject();
-
+                    Log.i(debugString, recibido);
                     int tipo = Integer.parseInt(jsonRecibido.get("TipoAccion").toString());
                     if(tipo == 1){
+                        Log.i(debugString, "Entra a condicion");
                         BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
-                        bw.write("Tipo numero 1");
+                        String regreso = "Initialize";
+                        bw.write(regreso);
                         bw.newLine();
                         bw.flush();
                     }if(tipo == 2){
