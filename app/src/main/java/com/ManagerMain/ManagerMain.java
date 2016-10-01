@@ -17,6 +17,10 @@ import android.app.Activity;
 import android.util.Log;
 import android.widget.TextView;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+
 /**
  * Clase principal del manager, se encarga del server y la GUI con sus cambios
  * también podrá comunicarse con el API.
@@ -27,6 +31,8 @@ public class ManagerMain extends Activity {
     String mensaje = "";
     ServerSocket serverSocket;
     private static final String debugString = "debug";
+    Gson gson = new Gson();
+    JsonObject jsonRecibido;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -84,7 +90,8 @@ public class ManagerMain extends Activity {
                     Socket socket = serverSocket.accept();
                     //recibe los datos del node entrante
                     BufferedReader br = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-                    mensaje += br.readLine() + "\n";
+                    String recibido = br.readLine();
+                    mensaje += recibido + "\n";
                     //imprime estos datos en pantalla
                     ManagerMain.this.runOnUiThread(new Runnable() {
 
@@ -96,10 +103,47 @@ public class ManagerMain extends Activity {
                     //envia los datos que del nuevo nodo
                     //en esta linea es donde se puede llamar al api y ademas guardar los datos
                     //en la lista
-                    BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
-                    bw.write(mensaje);
-                    bw.newLine();
-                    bw.flush();
+                    jsonRecibido = gson.fromJson(recibido,JsonElement.class).getAsJsonObject();
+
+                    int tipo = Integer.parseInt(jsonRecibido.get("TipoAccion").toString());
+                    if(tipo == 1){
+                        BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
+                        bw.write("Tipo numero 1");
+                        bw.newLine();
+                        bw.flush();
+                    }if(tipo == 2){
+                        BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
+                        bw.write("Tipo numero 2");
+                        bw.newLine();
+                        bw.flush();
+                    }
+                    if(tipo == 3){
+                        BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
+                        bw.write("Tipo numero 3");
+                        bw.newLine();
+                        bw.flush();
+                    }if(tipo == 4){
+                        BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
+                        bw.write("Tipo numero 4");
+                        bw.newLine();
+                        bw.flush();
+                    }if(tipo == 5){
+                        BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
+                        bw.write("Tipo numero 4");
+                        bw.newLine();
+                        bw.flush();
+                    }if(tipo == 6){
+                        BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
+                        bw.write("Tipo numero 4");
+                        bw.newLine();
+                        bw.flush();
+                    }if(tipo == 7){
+                        BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
+                        bw.write("Tipo numero 4");
+                        bw.newLine();
+                        bw.flush();
+                    }
+
                 }
             } catch (IOException e) {
                 // TODO Auto-generated catch block
